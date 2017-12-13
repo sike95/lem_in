@@ -1,0 +1,13 @@
+3
+Room2 5 0
+##start
+Room0 1 2
+##end
+Room1 9 2
+Room3 5 4
+#connections
+Room0-Room2
+Room0-Room3
+Room2-Room1
+Room3-Room1
+Room2-Room3

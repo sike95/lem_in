@@ -6,50 +6,16 @@
 /*   By: mmpofu <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/05 10:46:18 by mmpofu            #+#    #+#             */
-/*   Updated: 2017/12/05 18:20:19 by mmpofu           ###   ########.fr       */
+/*   Updated: 2017/12/13 12:11:53 by mmpofu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 
-void	insert(t_list **head, char *str, char *x, char *y)
-{
-	t_list* temp;
-	temp = (t_list*)malloc(sizeof(t_list));
-	temp->name = ft_strdup(str);
-	temp->x = ft_atoi(x);
-	temp->y = ft_atoi(y);
-	temp->next = (*head);
-	(*head) = temp;
-}
-
-void	insert2(l_list **node, char *data)
-{
-	l_list* temp;
-	temp = (l_list*)malloc(sizeof(l_list));
- 	temp->data = data;
- 	temp->next = (*node);
- 	(*node) = temp;
-}
-
-void	print(l_list** head)
-{
-	l_list* temp;
-
-	temp = (*head);
-	while (temp != NULL)
-	{
-		//printf("%s %d %d \n", temp->name, temp->x, temp->y);
-		printf("%s ", temp->data);
-		temp = temp->next;
-	}
-	printf("\n");
-}
-
-int		free2d(char **str)
+int			free2d(char **str)
 {
 	int		i;
-	
+
 	i = 0;
 	while (str[i])
 	{
@@ -60,37 +26,68 @@ int		free2d(char **str)
 	return (0);
 }
 
-int		main(int ac, char **argv)
+t_path		*reverse(t_path *head)
 {
-	char	*line;
-	int		fd;
-	int		i;
-	int		j;
-	char	**split;
-	t_list*	head;
-	l_list* node;
+	t_path	*current;
+	t_path	*prev;
+	t_path	*next;
 
-	fd = open("map.txt", O_RDONLY);
-	i = 0;
-	j = 0;
-	node = NULL;
-	head = NULL;
-	while (get_next_line(fd, &line))
+	current = head;
+	prev = NULL;
+	while (current != NULL)
 	{
-		if (line[0] != '#' && line[1] != '-')
-		{
-			split = ft_strsplit(line, ' ');
-			insert(&head, split[0], split[1], split[2]);
-			free2d(split);
-		}
-		else if (line[1] == '-')
-		{
-			insert2(&node, line);
-		//	printf("%s\n", line);
-		}
-	}	
-//	print(&head);
-	print(&node);
+		next = current->next;
+		current->next = prev;
+		prev = current;
+		current = next;
+	}
+	head = prev;
+	return (head);
+}
 
+void		ver(t_main *var)
+{
+	var->i = 1;
+	var->cnt = 0;
+	var->head = NULL;
+	var->path = NULL;
+	var->head = read_and_store(var->head);
+	var->index = var->head;
+	var->has_start = 0;
+	var->has_end = 0;
+}
+
+int			move_ants(t_main *var, t_path *temp)
+{
+	while (var->num_ants >= var->i)
+	{
+		temp = var->path;
+		while (temp)
+		{
+			ft_putstr("L");
+			ft_putnbr(var->i);
+			ft_putstr("->");
+			ft_putendl(temp->data);
+			temp = temp->next;
+		}
+		var->i++;
+	}
+	return (0);
+}
+
+int			main(void)
+{
+	t_main		var;
+	t_path		*temp;
+
+	ver(&var);
+	error_check(&var);
+	save(&var);
+	search(&var);
+	insert3(&var.path, var.start);
+	iters(&var);
+	var.path = reverse(var.path);
+	temp = var.path;
+	move_ants(&var, temp);
 	return (0);
 }
